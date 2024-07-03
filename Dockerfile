@@ -1,27 +1,19 @@
-FROM alpine:latest as base
+FROM golang:latest
 
-RUN addgroup api && \
-  adduser -D -G api api
 
+
+# Create application directory
 RUN mkdir /app
 
-# Copy AMD binaries
-FROM base AS image-amd64
 
-COPY amd64/product-api /app/product-api
-RUN chmod +x /app/product-api
 
-# Copy ARM binaries
-FROM base AS image-arm64
+# Copy the product-api binary
+COPY . .
+RUN go install .
 
-COPY arm64/product-api /app/product-api
-RUN chmod +x /app/product-api
 
-FROM image-${TARGETARCH}
+# Copy the configuration file
 
-ARG TARGETPLATFORM
-ARG BUILDPLATFORM
 
-RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM"
-
-ENTRYPOINT [ "/app/product-api" ]
+# Set entrypoint
+ENTRYPOINT [ "go", "run", "main.go" ]

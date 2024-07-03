@@ -25,6 +25,10 @@ type Connection interface {
 	DeleteOrder(int, int) error
 	CreateCoffee(model.Coffee) (model.Coffee, error)
 	UpsertCoffeeIngredient(model.Coffee, model.Ingredient) (model.CoffeeIngredient, error)
+	CreateGame(model.Game) (model.Game, error)
+	UpdateGame(int, model.Game) (model.Game, error)
+	GetGame(int) (model.Game, error)
+	DeleteGame(int) (error)
 }
 
 type PostgresSQL struct {
@@ -479,4 +483,92 @@ func (c *PostgresSQL) UpsertCoffeeIngredient(coffee model.Coffee, ingredient mod
 	}
 
 	return i, nil
+}
+
+func (c *PostgresSQL) CreateGame(game model.Game) (model.Game, error){
+	g := model.Game{}
+
+	rows, err := c.db.NamedQuery(
+		`INSERT INTO Games (name, star_point, player_num, created_at, updated_at) 
+		VALUES(:name, :star_point, :player_num, now(), now()) 
+		RETURNING id;`, map[string]interface{}{
+			"name":        game.Name,
+			"star_point":  game.StarPoint,
+			"player_num":  game.PlayerNum,
+		})
+	if err != nil {
+		return g, err
+	}
+	defer rows.Close()
+
+	if rows.Next() {
+		err := rows.StructScan(&g)
+		if err != nil {
+			return g, err
+		}
+	}
+
+	return g, nil
+}
+
+func (c *PostgresSQL) UpdateGame(gameId int, game model.Game) (model.Game, error) {
+	g := model.Game{}
+
+	rows, err := c.db.NamedQuery(
+		`UPDATE Games SET name=:name, star_point=:star_point, player_num=:player_num, updated_at=now()
+		WHERE id=:id
+		RETURNING id, name, star_point, player_num;`, map[string]interface{}{
+			"id":		   gameId,
+			"name":        game.Name,
+			"star_point":  game.StarPoint,
+			"player_num":  game.PlayerNum,
+		})
+	if err != nil {
+		return g, err
+	}
+	defer rows.Close()
+
+	if rows.Next() {
+		err := rows.StructScan(&g)
+		if err != nil {
+			return g, err
+		}
+	}
+
+	return g, nil
+}
+
+
+func (c *PostgresSQL) GetGame(gameId int) (model.Game, error) {
+	g := model.Game{}
+
+	rows, err := c.db.NamedQuery(
+		`SELECT id, name, star_point, player_num 
+		FROM Games 
+		WHERE id=:id;`, map[string]interface{}{
+			"id": gameId,
+		})
+	if err != nil {
+		return g, err
+	}
+	defer rows.Close()
+
+	if rows.Next() {
+		err := rows.StructScan(&g)
+		if err != nil {
+			return g, err
+		}
+	}
+
+	return g, nil
+}
+
+
+func (c *PostgresSQL) DeleteGame(gameId int) error {
+	_, err := c.db.NamedExec(
+		`DELETE FROM Games 
+		WHERE id=:id;`, map[string]interface{}{
+			"id": gameId,
+		})
+	return err
 }

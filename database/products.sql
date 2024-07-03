@@ -64,6 +64,16 @@ CREATE TABLE order_items (
     deleted_at TIMESTAMP
 );
 
+CREATE TABLE games (
+    id serial PRIMARY KEY,
+    name VARCHAR (255) NOT NULL UNIQUE,
+    star_point real NOT NUll,
+    player_num int NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL,
+    deleted_at TIMESTAMP
+);
+
 INSERT INTO ingredients (id, name, created_at, updated_at) VALUES (1, 'Espresso', CURRENT_DATE, CURRENT_DATE);
 INSERT INTO ingredients (id, name, created_at, updated_at) VALUES (2, 'Semi Skimmed Milk', CURRENT_DATE, CURRENT_DATE);
 INSERT INTO ingredients (id, name, created_at, updated_at) VALUES (3, 'Hot Water', CURRENT_DATE, CURRENT_DATE);
@@ -104,3 +114,8 @@ INSERT INTO coffee_ingredients (coffee_id, ingredient_id, quantity, unit, create
 INSERT INTO coffees (name, teaser, collection, origin, color, description, price, image, created_at, updated_at) VALUES ('Waypointiato', 'Deploy with a little foam', 'Discoveries', 'Fall 2020', '#14C6CB', '', 250, '/waypoint.png', CURRENT_DATE, CURRENT_DATE);
 INSERT INTO coffee_ingredients (coffee_id, ingredient_id, quantity, unit, created_at, updated_at) VALUES (9,1, 60, 'ml', CURRENT_DATE, CURRENT_DATE);
 INSERT INTO coffee_ingredients (coffee_id, ingredient_id, quantity, unit, created_at, updated_at) VALUES (9,2, 30, 'ml', CURRENT_DATE, CURRENT_DATE);
+
+INSERT INTO games (name, star_point, player_num, created_at, updated_at) VALUES ('Super Mario', 4.0, 2, CURRENT_DATE, CURRENT_DATE);
+INSERT INTO games (name, star_point, player_num, created_at, updated_at) VALUES ('Donkey', 3.0, 1, CURRENT_DATE, CURRENT_DATE);
+INSERT INTO games (name, star_point, player_num, created_at, updated_at) VALUES ('Zelda', 5.0, 1, CURRENT_DATE, CURRENT_DATE);
+INSERT INTO games (name, star_point, player_num, created_at, updated_at) VALUES ('Dark Soul', 3.0, 1, CURRENT_DATE, CURRENT_DATE);

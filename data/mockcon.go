@@ -156,3 +156,43 @@ func (c *MockConnection) UpsertCoffeeIngredient(coffee model.Coffee, ingredient 
 
 	return model.CoffeeIngredient{}, args.Error(1)
 }
+
+func (c *MockConnection) CreateGame(game model.Game) (model.Game, error){
+	args := c.Called()
+
+	if g, ok := args.Get(0).(model.Game); ok {
+		return g, args.Error(1)
+	}
+
+	return model.Game{}, args.Error(1)
+}
+
+func (c *MockConnection) UpdateGame(gameId int, game model.Game) (model.Game, error){
+	args := c.Called()
+
+	if g, ok := args.Get(0).(model.Game); ok {
+		return g, args.Error(1)
+	}
+
+	return model.Game{}, args.Error(1)
+}
+
+func (c *MockConnection) DeleteGame(gameId int) (error){
+	args := c.Called()
+
+	if err, ok := args.Get(0).(error); ok {
+		return err
+	}
+
+	return nil
+}
+
+func (c *MockConnection) GetGame(gameId int) (model.Game, error){
+	args := c.Called()
+
+	if g, ok := args.Get(0).(model.Game); ok {
+		return g, args.Error(1)
+	}
+
+	return model.Game{}, args.Error(1)
+}
